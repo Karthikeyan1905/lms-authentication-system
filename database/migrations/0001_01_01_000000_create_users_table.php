@@ -6,17 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable()->index(); // null = Super Admin
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('role')->default('student');    // super_admin, school_admin, teacher, student, parent
+            $table->string('status')->default('active');   // active / suspended
+            $table->unsignedTinyInteger('failed_attempts')->default(0);
+            $table->timestamp('locked_until')->nullable();
+            $table->boolean('mfa_enabled')->default(false);
+            $table->string('mfa_method')->default('email');
+            $table->timestamp('onboarded_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -37,9 +43,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
