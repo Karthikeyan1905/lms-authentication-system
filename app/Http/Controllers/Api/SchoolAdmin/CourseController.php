@@ -39,25 +39,53 @@ class CourseController extends Controller
     }
 
     public function index()
-{
-    // Step 1: Retrieve all courses
-    $courses = Course::select(
-        'id',
-        'title',
-        'course_code',
-        'description',
-        'duration',
-        'status',
-        'tenant_id',
-        'created_at'
-    )
-    ->latest()
-    ->paginate(10);
+    {
+        // Step 1: Retrieve all courses
+        $courses = Course::select(
+            'id',
+            'title',
+            'course_code',
+            'description',
+            'duration',
+            'status',
+            'tenant_id',
+            'created_at'
+        )
+            ->latest()
+            ->paginate(10);
 
-    // Step 2: Return course list
-    return response()->json([
-        'message' => 'Courses retrieved successfully.',
-        'courses' => $courses,
-    ], 200);
-}
+        // Step 2: Return course list
+        return response()->json([
+            'message' => 'Courses retrieved successfully.',
+            'courses' => $courses,
+        ], 200);
+    }
+
+    public function show($id)
+    {
+        // Step 1: Find the course by ID
+        $course = Course::select(
+            'id',
+            'title',
+            'course_code',
+            'description',
+            'duration',
+            'status',
+            'tenant_id',
+            'created_at'
+        )->find($id);
+
+        // Step 2: Check whether the course exists
+        if (!$course) {
+            return response()->json([
+                'message' => 'Course not found.',
+            ], 404);
+        }
+
+        // Step 3: Return course details
+        return response()->json([
+            'message' => 'Course retrieved successfully.',
+            'course' => $course,
+        ], 200);
+    }
 }

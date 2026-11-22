@@ -8,12 +8,14 @@ use App\Models\AuditLog;
 use App\Http\Controllers\Api\SchoolAdmin\StudentController;
 use App\Http\Controllers\Api\Student\StudentController as StudentProfileController;
 use App\Http\Controllers\Api\SchoolAdmin\CourseController;
+use App\Http\Controllers\Api\Student\CourseController as StudentCourseController;
 
 Route::get('/test', function () {
     return response()->json([
         'message' => 'LMS API is working!',
     ]);
 });
+
 
 Route::middleware(['auth:sanctum', 'tenant.access'])
     ->get('/tenant-check', function () {
@@ -103,6 +105,7 @@ Route::middleware(['auth:sanctum', 'tenant.access', 'role:school_admin'])
         // Course APIs
         Route::post('/courses', [CourseController::class, 'store']);
         Route::get('/courses', [CourseController::class, 'index']);
+        Route::get('/courses/{id}', [CourseController::class, 'show']);
     });
 
 // Teacher APIs
@@ -122,6 +125,9 @@ Route::middleware(['auth:sanctum', 'tenant.access', 'role:student'])
     ->group(function () {
         Route::get('/dashboard', [StudentProfileController::class, 'dashboard']);
         Route::get('/profile', [StudentProfileController::class, 'profile']);
+
+        Route::get('/courses', [StudentCourseController::class, 'index']);
+        Route::get('/courses/{id}', [StudentCourseController::class, 'show']);
     });
 
 // Parent APIs
